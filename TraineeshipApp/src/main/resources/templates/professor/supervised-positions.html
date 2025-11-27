@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supervised Positions - Traineeship</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      padding-top: 2rem;
+    }
+    .page-header {
+      background: linear-gradient(90deg, #3a7bd5 0%, #45cafc 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    .positions-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      color: #3a7bd5;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    .btn-primary {
+      background: #3a7bd5;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+    }
+    .btn-primary:hover {
+      background: #2763b8;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(58, 123, 213, 0.2);
+    }
+    .position-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .position-item:hover {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transform: translateY(-3px);
+    }
+    .position-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #3a7bd5;
+      margin-bottom: 0.5rem;
+    }
+    .position-detail {
+      margin-bottom: 0.5rem;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #64748b;
+    }
+    .badge {
+      border-radius: 20px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+    }
+    .badge-evaluated {
+      background-color: #10b981;
+      color: white;
+    }
+    .badge-pending {
+      background-color: #f59e0b;
+      color: white;
+    }
+    .alert-success {
+      border-radius: 12px;
+      background-color: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="page-header">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1><i class="fas fa-tasks me-2"></i> Supervised Positions</h1>
+        <p class="mb-0">View and evaluate traineeships under your supervision</p>
+      </div>
+      <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a th:href="@{/professor/dashboard}" class="btn btn-light">
+          <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert alert-success mb-4" role="alert" th:if="${successMessage}">
+    <i class="fas fa-check-circle me-2"></i> <span th:text="${successMessage}">Success message</span>
+  </div>
+
+  <div class="positions-card">
+    <h3 class="card-title">Traineeships Under Your Supervision</h3>
+
+    <div th:if="${supervisedPositions == null || supervisedPositions.isEmpty()}">
+      <p class="text-muted">You have no assigned traineeship positions to supervise yet.</p>
+    </div>
+
+    <div th:unless="${supervisedPositions == null || supervisedPositions.isEmpty()}">
+      <div class="position-item" th:each="position : ${supervisedPositions}">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="position-title" th:text="${position.title}">Position Title</div>
+
+            <div class="position-detail">
+              <span class="detail-label">Student:</span>
+              <span th:text="${position.student != null ? position.student.studentName : 'Not assigned yet'}">Student Name</span>
+            </div>
+
+            <div class="position-detail">
+              <span class="detail-label">Company:</span>
+              <span th:text="${position.company.companyName}">Company Name</span>
+            </div>
+
+            <div class="position-detail">
+              <span class="detail-label">Period:</span>
+              <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')} + ' - ' + ${#temporals.format(position.toDate, 'dd/MM/yyyy')}">Period</span>
+            </div>
+
+            <div class="position-detail">
+              <span class="detail-label">Status:</span>
+              <span th:if="${position.evaluations != null && #lists.size(position.evaluations) > 0}" class="badge badge-evaluated">Evaluated</span>
+              <span th:unless="${position.evaluations != null && #lists.size(position.evaluations) > 0}" class="badge badge-pending">Pending Evaluation</span>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <a th:href="@{'/professor/position-details/' + ${position.id}}" class="btn btn-sm btn-outline-primary mb-2 w-100">
+              <i class="fas fa-info-circle me-1"></i> View Details
+            </a>
+
+            <a th:href="@{'/professor/student-logbook/' + ${position.id}}"
+               th:if="${position.studentLogbook != null && !position.studentLogbook.isEmpty()}"
+               class="btn btn-sm btn-outline-info mb-2 w-100">
+              <i class="fas fa-book me-1"></i> View Logbook
+            </a>
+
+            <a th:href="@{'/professor/evaluate/' + ${position.id}}" class="btn btn-sm btn-outline-success w-100">
+              <i class="fas fa-clipboard-check me-1"></i> Evaluate
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

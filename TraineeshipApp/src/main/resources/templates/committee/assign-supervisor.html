@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assign Supervisor - Traineeship</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      padding-top: 2rem;
+    }
+    .page-header {
+      background: linear-gradient(90deg, #3a7bd5 0%, #45cafc 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    .position-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .position-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #3a7bd5;
+      margin-bottom: 0.5rem;
+    }
+    .badge-tag {
+      background: #e2f0fe;
+      color: #3a7bd5;
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    .assignment-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn-primary {
+      background: #3a7bd5;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+    }
+    .btn-primary:hover {
+      background: #2763b8;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(58, 123, 213, 0.2);
+    }
+    .strategy-option {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .strategy-option:hover {
+      border-color: #3a7bd5;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(58, 123, 213, 0.1);
+    }
+    .strategy-option.selected {
+      border-color: #3a7bd5;
+      background: rgba(58, 123, 213, 0.05);
+    }
+    .strategy-icon {
+      font-size: 1.5rem;
+      color: #3a7bd5;
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="page-header">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1><i class="fas fa-chalkboard-teacher me-2"></i> Assign Supervisor</h1>
+        <p class="mb-0">Select an assignment strategy for this position</p>
+      </div>
+      <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a th:href="@{/committee/dashboard}" class="btn btn-light">
+          <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert sections for feedback messages -->
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <span th:text="${error}">Error message</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <i class="fas fa-info-circle me-2"></i>
+    <span th:text="${warning}">Warning message</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="fas fa-check-circle me-2"></i>
+    <span th:text="${success}">Success message</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div class="position-card">
+    <div class="position-title" th:text="${position.title}">Position Title</div>
+    <p class="mb-2" th:text="${position.description}">Position description here...</p>
+
+    <div class="mb-2">
+      <strong>Company:</strong> <span th:text="${position.company.companyName}">Company Name</span>
+    </div>
+
+    <div class="mb-2">
+      <strong>Student:</strong> <span th:text="${position.student.studentName}">Student Name</span>
+    </div>
+
+    <div class="mb-2">
+      <strong>Period:</strong>
+      <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')}">Start Date</span> -
+      <span th:text="${#temporals.format(position.toDate, 'dd/MM/yyyy')}">End Date</span>
+    </div>
+
+    <div class="mb-3">
+      <strong>Topics:</strong>
+      <div th:if="${position.topics == null || position.topics.isEmpty()}">
+        <span class="text-muted">No topics specified</span>
+      </div>
+      <div th:unless="${position.topics == null || position.topics.isEmpty()}">
+        <span class="badge-tag" th:each="topic : ${position.topics}" th:text="${topic}">Topic</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="assignment-card">
+    <h4 class="mb-3">Choose Assignment Strategy</h4>
+
+    <!-- Add helpful information if previous attempt failed -->
+    <div th:if="${error}" class="alert alert-info mb-3">
+      <p class="mb-1"><strong>Tip:</strong> The interest-based strategy requires professors to have interests matching the position topics.</p>
+      <p class="mb-1">Current position topics:
+        <span th:if="${position.topics != null && !position.topics.isEmpty()}"
+              th:text="${#strings.listJoin(position.topics, ', ')}">Topics</span>
+        <span th:if="${position.topics == null || position.topics.isEmpty()}"
+              class="text-muted">No topics specified</span>
+      </p>
+      <p class="mb-0">Consider using the load-based strategy if no professors match the topics.</p>
+    </div>
+
+    <form th:action="@{/committee/assign-supervisor}" method="post">
+      <input type="hidden" name="positionId" th:value="${position.id}" />
+
+      <div class="strategy-option mb-3" onclick="selectStrategy('interests', this)">
+        <div class="d-flex align-items-center">
+          <input type="radio" name="strategy" value="interests" id="strategy-interests" class="me-2">
+          <i class="fas fa-star strategy-icon"></i>
+          <div>
+            <label for="strategy-interests" class="form-label fw-bold mb-0">Interest-Based Assignment</label>
+            <p class="text-muted mb-0">Assign a professor whose interests best match the position topics.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="strategy-option mb-3" onclick="selectStrategy('load', this)">
+        <div class="d-flex align-items-center">
+          <input type="radio" name="strategy" value="load" id="strategy-load" class="me-2">
+          <i class="fas fa-balance-scale strategy-icon"></i>
+          <div>
+            <label for="strategy-load" class="form-label fw-bold mb-0">Load-Based Assignment</label>
+            <p class="text-muted mb-0">Assign the professor with the fewest supervised positions.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-user-check me-2"></i> Assign Supervisor
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function selectStrategy(strategy, element) {
+    // Clear previous selection
+    document.querySelectorAll('.strategy-option').forEach(option => {
+      option.classList.remove('selected');
+    });
+
+    // Select clicked option
+    element.classList.add('selected');
+
+    // Check the radio button
+    document.getElementById('strategy-' + strategy).checked = true;
+  }
+
+  // Set default selection
+  document.addEventListener('DOMContentLoaded', function() {
+    const selectedStrategy = document.querySelector('input[name="strategy"]:checked');
+    if (selectedStrategy) {
+      selectedStrategy.closest('.strategy-option').classList.add('selected');
+    } else {
+      document.getElementById('strategy-interests').checked = true;
+      document.getElementById('strategy-interests').closest('.strategy-option').classList.add('selected');
+    }
+  });
+</script>
+</body>
+</html>

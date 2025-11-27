@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Available Positions - Traineeship</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding-top: 2rem;
+        }
+        .page-header {
+            background: linear-gradient(90deg, #3a7bd5 0%, #45cafc 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+        .filter-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .position-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .position-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .position-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #3a7bd5;
+            margin-bottom: 0.5rem;
+        }
+        .badge-tag {
+            background: #e2f0fe;
+            color: #3a7bd5;
+            padding: 0.35rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: #3a7bd5;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+        }
+        .btn-primary:hover {
+            background: #2763b8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(58, 123, 213, 0.2);
+        }
+        .student-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .student-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #3a7bd5;
+            margin-bottom: 0.5rem;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+        .info-label {
+            font-weight: 600;
+            width: 40%;
+            color: #64748b;
+        }
+        .info-value {
+            width: 60%;
+        }
+        .strategy-btn {
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .strategy-btn.active {
+            background: #3a7bd5;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1><i class="fas fa-search me-2"></i> Available Positions</h1>
+                <p class="mb-0">Find suitable traineeship positions for the student</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a th:href="@{/committee/applicants}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Applicants
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="student-card">
+        <div class="student-name" th:text="${student.studentName}">Student Name</div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-row">
+                    <div class="info-label">Student ID:</div>
+                    <div class="info-value" th:text="${student.studentNumber != null ? student.studentNumber : 'Not provided'}">12345</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Average Grade:</div>
+                    <div class="info-value" th:text="${student.avgGrade != null ? student.avgGrade : 'Not provided'}">4.5</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Preferred Location:</div>
+                    <div class="info-value" th:text="${student.preferredLocation != null ? student.preferredLocation : 'Not specified'}">City</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-row">
+                    <div class="info-label">Interests:</div>
+                    <div class="info-value">
+                        <span th:if="${student.interests == null || student.interests.isEmpty()}" class="text-muted">No interests specified</span>
+                        <span th:unless="${student.interests == null || student.interests.isEmpty()}"
+                              th:text="${#strings.listJoin(student.interests, ', ')}">Interests</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Skills:</div>
+                    <div class="info-value">
+                        <span th:if="${student.skills == null || student.skills.isEmpty()}" class="text-muted">No skills specified</span>
+                        <span th:unless="${student.skills == null || student.skills.isEmpty()}"
+                              th:text="${#strings.listJoin(student.skills, ', ')}">Skills</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <h4 class="mb-3">Search Strategy</h4>
+        <div>
+            <a th:href="@{/committee/find-positions/{username}(username=${student.username}, strategy='interests')}"
+               class="btn btn-outline-primary strategy-btn"
+               th:classappend="${currentStrategy == 'interests'} ? 'active' : ''">
+                <i class="fas fa-star me-2"></i> By Interests
+            </a>
+
+            <a th:href="@{/committee/find-positions/{username}(username=${student.username}, strategy='location')}"
+               class="btn btn-outline-primary strategy-btn"
+               th:classappend="${currentStrategy == 'location'} ? 'active' : ''">
+                <i class="fas fa-map-marker-alt me-2"></i> By Location
+            </a>
+
+            <a th:href="@{/committee/find-positions/{username}(username=${student.username}, strategy='combined')}"
+               class="btn btn-outline-primary strategy-btn"
+               th:classappend="${currentStrategy == 'combined'} ? 'active' : ''">
+                <i class="fas fa-layer-group me-2"></i> Combined
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${positions.isEmpty()}" class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i> No matching positions found for this student using the selected strategy.
+    </div>
+
+    <div th:unless="${positions.isEmpty()}">
+        <div class="position-card" th:each="position : ${positions}">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="position-title" th:text="${position.title}">Position Title</div>
+                    <p class="mb-2" th:text="${position.description}">Position description here...</p>
+
+                    <div class="mb-2">
+                        <strong>Company:</strong> <span th:text="${position.company.companyName}">Company Name</span>
+                    </div>
+
+                    <div class="mb-2">
+                        <strong>Location:</strong> <span th:text="${position.company.companyLocation}">Location</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Period:</strong>
+                        <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')}">Start Date</span> -
+                        <span th:text="${#temporals.format(position.toDate, 'dd/MM/yyyy')}">End Date</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Required Skills:</strong>
+                        <div th:if="${position.requiredSkills == null || position.requiredSkills.isEmpty()}">
+                            <span class="text-muted">No specific skills required</span>
+                        </div>
+                        <div th:unless="${position.requiredSkills == null || position.requiredSkills.isEmpty()}">
+                            <span class="badge-tag" th:each="skill : ${position.requiredSkills}" th:text="${skill}">Skill</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Topics:</strong>
+                        <div th:if="${position.topics == null || position.topics.isEmpty()}">
+                            <span class="text-muted">No topics specified</span>
+                        </div>
+                        <div th:unless="${position.topics == null || position.topics.isEmpty()}">
+                            <span class="badge-tag" th:each="topic : ${position.topics}" th:text="${topic}">Topic</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <form th:action="@{/committee/assign-position}" method="post">
+                        <input type="hidden" name="positionId" th:value="${position.id}" />
+                        <input type="hidden" name="studentUsername" th:value="${student.username}" />
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-check me-2"></i> Assign Position
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

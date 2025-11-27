@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <title>Sign Up - Traineeship</title>
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 2rem 0;
+    }
+
+    .signup-card {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      background: linear-gradient(90deg, #3a7bd5 0%, #45cafc 100%);
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .app-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+    }
+
+    .card-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-control {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #3a7bd5;
+      box-shadow: 0 0 0 0.2rem rgba(58, 123, 213, 0.25);
+      background-color: #fff;
+    }
+
+    .form-select {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+      transition: all 0.3s ease;
+    }
+
+    .form-select:focus {
+      border-color: #3a7bd5;
+      box-shadow: 0 0 0 0.2rem rgba(58, 123, 213, 0.25);
+      background-color: #fff;
+    }
+
+    .input-group-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+    }
+
+    .btn {
+      border-radius: 50px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #3a7bd5;
+      border: none;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2763b8;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(58, 123, 213, 0.2);
+    }
+
+    .btn-outline-primary {
+      background: transparent;
+      border: 1px solid #3a7bd5;
+      color: #3a7bd5;
+    }
+
+    .btn-outline-primary:hover {
+      background: rgba(58, 123, 213, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(58, 123, 213, 0.1);
+    }
+
+    .alert {
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+      background-color: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    .alert-danger {
+      background-color: #fee2e2;
+      border-color: #ef4444;
+      color: #b91c1c;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* Abstract shapes in background */
+    .shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .circle-1 {
+      width: 80px;
+      height: 80px;
+      top: -20px;
+      left: 10%;
+    }
+
+    .circle-2 {
+      width: 60px;
+      height: 60px;
+      bottom: -10px;
+      right: 15%;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 575px) {
+      .signup-card {
+        margin: 0 15px;
+        border-radius: 12px;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="signup-card">
+  <div class="card-header">
+    <div class="shapes">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+    </div>
+    <h1 class="app-title">Traineeship</h1>
+    <p class="card-subtitle">Create your account</p>
+  </div>
+
+  <div class="card-body">
+    <form action="#" th:action="@{/save}" th:object="${user}" method="post">
+
+      <!-- Error message -->
+      <div th:if="${param.error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        Registration Error. Please check your information and try again.
+      </div>
+
+      <!-- Success message -->
+      <div th:if="${successMessage}" class="alert alert-success">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:utext="${successMessage}"></span>
+      </div>
+
+      <div class="input-group">
+        <input type="text" th:field="*{firstName}" class="form-control" placeholder="First Name" required />
+        <span class="input-group-icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+      </div>
+
+      <div class="input-group">
+        <input type="text" th:field="*{lastName}" class="form-control" placeholder="Last Name" required />
+        <span class="input-group-icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+      </div>
+
+      <div class="input-group">
+        <input type="email" th:field="*{email}" class="form-control" placeholder="Email" required />
+        <span class="input-group-icon">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+      </div>
+
+      <div class="input-group">
+        <input type="text" th:field="*{username}" class="form-control" placeholder="Username" required />
+        <span class="input-group-icon">
+                        <i class="fas fa-at"></i>
+                    </span>
+      </div>
+
+      <div class="input-group">
+        <input type="password" th:field="*{password}" class="form-control" placeholder="Password" required />
+        <span class="input-group-icon">
+                        <i class="fas fa-lock"></i>
+                    </span>
+      </div>
+
+      <div class="input-group">
+        <select th:field="*{role}" class="form-select" required>
+          <option value="">Select Role</option>
+          <option value="STUDENT">Student</option>
+          <option value="PROFESSOR">Professor</option>
+          <option value="COMPANY">Company</option>
+          <option value="COMMITTEE">Committee</option>
+        </select>
+        <span class="input-group-icon">
+                        <i class="fas fa-user-tag"></i>
+                    </span>
+      </div>
+
+      <div class="action-buttons">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-user-plus me-2"></i> Register
+        </button>
+
+        <a th:href="@{/login}" class="btn btn-outline-primary">
+          <i class="fas fa-sign-in-alt me-2"></i> Login
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

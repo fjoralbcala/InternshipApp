@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evaluate Traineeship - Traineeship</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      padding-top: 2rem;
+    }
+    .evaluation-header {
+      background: linear-gradient(90deg, #3a7bd5 0%, #45cafc 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    .evaluation-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .position-info {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .btn-primary {
+      background: #3a7bd5;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+    }
+    .btn-primary:hover {
+      background: #2763b8;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(58, 123, 213, 0.2);
+    }
+    .rating-scale {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .rating-option {
+      position: relative;
+      flex: 1;
+    }
+    .rating-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .rating-label {
+      display: block;
+      text-align: center;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .rating-label .rating-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .rating-label .rating-text {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+    .rating-option input[type="radio"]:checked + .rating-label {
+      border-color: #3a7bd5;
+      background-color: #f0f9ff;
+    }
+    .rating-option input[type="radio"]:checked + .rating-label .rating-number {
+      color: #3a7bd5;
+    }
+    .rating-option:hover .rating-label {
+      border-color: #94a3b8;
+    }
+    .form-section {
+      margin-bottom: 2rem;
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: #1e293b;
+    }
+    .info-item {
+      margin-bottom: 0.5rem;
+    }
+    .info-label {
+      font-weight: 600;
+      color: #64748b;
+    }
+    .evaluation-section {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .evaluation-section:last-child {
+      border-bottom: none;
+    }
+    .section-header {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="evaluation-header">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1><i class="fas fa-clipboard-check me-2"></i> Traineeship Evaluation</h1>
+        <p class="mb-0">Evaluate the student's performance and hosting company</p>
+      </div>
+      <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a th:href="@{/professor/dashboard}" class="btn btn-light">
+          <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="position-info">
+    <h4 class="mb-3">Traineeship Details</h4>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="info-item">
+          <span class="info-label">Position:</span>
+          <span th:text="${position.title}">Position Title</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Student:</span>
+          <span th:text="${position.student.studentName}">Student Name</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Company:</span>
+          <span th:text="${position.company.companyName}">Company Name</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-item">
+          <span class="info-label">Start Date:</span>
+          <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')}">Start Date</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">End Date:</span>
+          <span th:text="${#temporals.format(position.toDate, 'dd/MM/yyyy')}">End Date</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Location:</span>
+          <span th:text="${position.company.companyLocation}">Location</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="evaluation-card">
+    <form th:action="@{/professor/evaluate/{id}(id=${position.id})}" th:object="${evaluation}" method="post">
+      <input type="hidden" th:field="*{id}" />
+
+      <!-- Student Evaluation Section -->
+      <div class="evaluation-section">
+        <h3 class="section-header">Student Performance Evaluation</h3>
+
+        <!-- Motivation Rating -->
+        <div class="form-section">
+          <div class="section-title">Motivation</div>
+          <p class="text-muted mb-3">Rate the student's enthusiasm, commitment, and overall motivation during the traineeship.</p>
+          <div class="rating-scale">
+            <div class="rating-option">
+              <input type="radio" id="motivation1" name="motivation" value="1" th:field="*{motivation}">
+              <label class="rating-label" for="motivation1">
+                <div class="rating-number">1</div>
+                <div class="rating-text">Bad</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="motivation2" name="motivation" value="2" th:field="*{motivation}">
+              <label class="rating-label" for="motivation2">
+                <div class="rating-number">2</div>
+                <div class="rating-text">Poor</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="motivation3" name="motivation" value="3" th:field="*{motivation}">
+              <label class="rating-label" for="motivation3">
+                <div class="rating-number">3</div>
+                <div class="rating-text">Average</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="motivation4" name="motivation" value="4" th:field="*{motivation}">
+              <label class="rating-label" for="motivation4">
+                <div class="rating-number">4</div>
+                <div class="rating-text">Good</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="motivation5" name="motivation" value="5" th:field="*{motivation}">
+              <label class="rating-label" for="motivation5">
+                <div class="rating-number">5</div>
+                <div class="rating-text">Perfect</div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Effectiveness Rating -->
+        <div class="form-section">
+          <div class="section-title">Effectiveness</div>
+          <p class="text-muted mb-3">Rate the student's ability to achieve goals and complete tasks successfully.</p>
+          <div class="rating-scale">
+            <div class="rating-option">
+              <input type="radio" id="effectiveness1" name="effectiveness" value="1" th:field="*{effectiveness}">
+              <label class="rating-label" for="effectiveness1">
+                <div class="rating-number">1</div>
+                <div class="rating-text">Bad</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="effectiveness2" name="effectiveness" value="2" th:field="*{effectiveness}">
+              <label class="rating-label" for="effectiveness2">
+                <div class="rating-number">2</div>
+                <div class="rating-text">Poor</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="effectiveness3" name="effectiveness" value="3" th:field="*{effectiveness}">
+              <label class="rating-label" for="effectiveness3">
+                <div class="rating-number">3</div>
+                <div class="rating-text">Average</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="effectiveness4" name="effectiveness" value="4" th:field="*{effectiveness}">
+              <label class="rating-label" for="effectiveness4">
+                <div class="rating-number">4</div>
+                <div class="rating-text">Good</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="effectiveness5" name="effectiveness" value="5" th:field="*{effectiveness}">
+              <label class="rating-label" for="effectiveness5">
+                <div class="rating-number">5</div>
+                <div class="rating-text">Perfect</div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Efficiency Rating -->
+        <div class="form-section">
+          <div class="section-title">Efficiency</div>
+          <p class="text-muted mb-3">Rate the student's ability to work productively and manage time well.</p>
+          <div class="rating-scale">
+            <div class="rating-option">
+              <input type="radio" id="efficiency1" name="efficiency" value="1" th:field="*{efficiency}">
+              <label class="rating-label" for="efficiency1">
+                <div class="rating-number">1</div>
+                <div class="rating-text">Bad</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="efficiency2" name="efficiency" value="2" th:field="*{efficiency}">
+              <label class="rating-label" for="efficiency2">
+                <div class="rating-number">2</div>
+                <div class="rating-text">Poor</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="efficiency3" name="efficiency" value="3" th:field="*{efficiency}">
+              <label class="rating-label" for="efficiency3">
+                <div class="rating-number">3</div>
+                <div class="rating-text">Average</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="efficiency4" name="efficiency" value="4" th:field="*{efficiency}">
+              <label class="rating-label" for="efficiency4">
+                <div class="rating-number">4</div>
+                <div class="rating-text">Good</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="efficiency5" name="efficiency" value="5" th:field="*{efficiency}">
+              <label class="rating-label" for="efficiency5">
+                <div class="rating-number">5</div>
+                <div class="rating-text">Perfect</div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Evaluation Section -->
+      <div class="evaluation-section">
+        <h3 class="section-header">Hosting Company Evaluation</h3>
+
+        <!-- Facilities Rating -->
+        <div class="form-section">
+          <div class="section-title">Facilities Provided</div>
+          <p class="text-muted mb-3">Rate the quality of facilities provided by the company for the trainee (workspace, equipment, resources, etc.)</p>
+          <div class="rating-scale">
+            <div class="rating-option">
+              <input type="radio" id="facilities1" name="companyFacilities" value="1" th:field="*{companyFacilities}">
+              <label class="rating-label" for="facilities1">
+                <div class="rating-number">1</div>
+                <div class="rating-text">Bad</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="facilities2" name="companyFacilities" value="2" th:field="*{companyFacilities}">
+              <label class="rating-label" for="facilities2">
+                <div class="rating-number">2</div>
+                <div class="rating-text">Poor</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="facilities3" name="companyFacilities" value="3" th:field="*{companyFacilities}">
+              <label class="rating-label" for="facilities3">
+                <div class="rating-number">3</div>
+                <div class="rating-text">Average</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="facilities4" name="companyFacilities" value="4" th:field="*{companyFacilities}">
+              <label class="rating-label" for="facilities4">
+                <div class="rating-number">4</div>
+                <div class="rating-text">Good</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="facilities5" name="companyFacilities" value="5" th:field="*{companyFacilities}">
+              <label class="rating-label" for="facilities5">
+                <div class="rating-number">5</div>
+                <div class="rating-text">Perfect</div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guidance Rating -->
+        <div class="form-section">
+          <div class="section-title">Student Guidance</div>
+          <p class="text-muted mb-3">Rate the quality of guidance and mentoring provided to the student by the company.</p>
+          <div class="rating-scale">
+            <div class="rating-option">
+              <input type="radio" id="guidance1" name="companyGuidance" value="1" th:field="*{companyGuidance}">
+              <label class="rating-label" for="guidance1">
+                <div class="rating-number">1</div>
+                <div class="rating-text">Bad</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="guidance2" name="companyGuidance" value="2" th:field="*{companyGuidance}">
+              <label class="rating-label" for="guidance2">
+                <div class="rating-number">2</div>
+                <div class="rating-text">Poor</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="guidance3" name="companyGuidance" value="3" th:field="*{companyGuidance}">
+              <label class="rating-label" for="guidance3">
+                <div class="rating-number">3</div>
+                <div class="rating-text">Average</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="guidance4" name="companyGuidance" value="4" th:field="*{companyGuidance}">
+              <label class="rating-label" for="guidance4">
+                <div class="rating-number">4</div>
+                <div class="rating-text">Good</div>
+              </label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="guidance5" name="companyGuidance" value="5" th:field="*{companyGuidance}">
+              <label class="rating-label" for="guidance5">
+                <div class="rating-number">5</div>
+                <div class="rating-text">Perfect</div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save me-2"></i> Submit Evaluation
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

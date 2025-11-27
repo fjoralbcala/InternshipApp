@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-TraineeshipAppApplication<TraineeshipApp>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "myy803.TraineeshipApp.TraineeshipApp.TraineeshipAppApplication",
+            "projectName": "TraineeshipApp",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

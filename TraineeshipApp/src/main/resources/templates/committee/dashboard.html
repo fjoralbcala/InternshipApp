@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Committee Dashboard - Traineeship</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding-top: 2rem;
+        }
+        .dashboard-header {
+            background: linear-gradient(90deg, #3a7bd5 0%, #45cafc 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            color: #3a7bd5;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        .btn-primary {
+            background: #3a7bd5;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+        }
+        .btn-primary:hover {
+            background: #2763b8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(58, 123, 213, 0.2);
+        }
+        .dashboard-menu {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .menu-icon {
+            font-size: 2rem;
+            color: #3a7bd5;
+            margin-bottom: 1rem;
+        }
+        .menu-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .badge-count {
+            background: #3a7bd5;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        .status-badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        .badge-success {
+            background: #10b981;
+            color: white;
+        }
+        .badge-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .badge-info {
+            background: #3b82f6;
+            color: white;
+        }
+        .tab-content {
+            margin-top: 1.5rem;
+        }
+        .nav-tabs .nav-link {
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .nav-tabs .nav-link.active {
+            color: #3a7bd5;
+            border-bottom-color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1><i class="fas fa-users-cog me-2"></i> Committee Dashboard</h1>
+                <p class="mb-0">Manage traineeship assignments and supervisions</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a th:href="@{/logout}" class="btn btn-outline-light">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-menu">
+        <a th:href="@{/committee/applicants}" class="menu-card text-decoration-none">
+            <div class="menu-icon"><i class="fas fa-user-graduate"></i></div>
+            <div class="menu-title">Student Applicants <span class="badge-count" th:text="${applicants.size()}">0</span></div>
+            <p class="text-muted">View and manage students who applied for traineeships</p>
+        </a>
+
+        <a th:href="@{/committee/positions}" class="menu-card text-decoration-none">
+            <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
+            <div class="menu-title">Assigned Positions <span class="badge-count" th:text="${assignedPositions != null ? assignedPositions.size() : 0}">0</span></div>
+            <p class="text-muted">Manage assigned traineeship positions</p>
+        </a>
+
+        <a th:href="@{/committee/supervisors}" class="menu-card text-decoration-none">
+            <div class="menu-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="menu-title">Supervisors <span class="badge-count" th:text="${professors != null ? professors.size() : 0}">0</span></div>
+            <p class="text-muted">View and manage supervising professors</p>
+        </a>
+
+        <a th:href="@{/committee/active-traineeships}" class="menu-card text-decoration-none">
+            <div class="menu-icon"><i class="fas fa-tasks"></i></div>
+            <div class="menu-title">Active Traineeships <span class="badge-count" th:text="${activeTraineeshipCount != null ? activeTraineeshipCount : 0}">0</span></div>
+            <p class="text-muted">Monitor evaluations and complete traineeships</p>
+        </a>
+
+    </div>
+
+    <div class="info-card">
+        <h3 class="card-title"><i class="fas fa-user-graduate me-2"></i> Recent Applicants</h3>
+
+        <div th:if="${applicants.isEmpty()}">
+            <p>There are no students currently looking for traineeships.</p>
+        </div>
+
+        <div th:unless="${applicants.isEmpty()}" class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Avg. Grade</th>
+                    <th>Preferred Location</th>
+                    <th>Skills</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${applicants}" th:if="${student.lookingForTraineeship}">
+                    <td th:text="${student.studentName}">Student Name</td>
+                    <td th:text="${student.avgGrade != null ? student.avgGrade : 'N/A'}">4.5</td>
+                    <td th:text="${student.preferredLocation != null ? student.preferredLocation : 'Any'}">City</td>
+                    <td>
+                        <span th:if="${student.skills == null || student.skills.isEmpty()}">-</span>
+                        <span th:unless="${student.skills == null || student.skills.isEmpty()}"
+                              th:text="${#strings.listJoin(student.skills, ', ')}">Skills</span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/committee/find-positions/' + ${student.username}}" class="btn btn-sm btn-primary">
+                            Find Positions
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-3" th:if="${applicants.size() > 5}">
+            <a th:href="@{/committee/applicants}" class="btn btn-outline-primary">
+                <i class="fas fa-list me-2"></i> View All Applicants
+            </a>
+        </div>
+    </div>
+
+    <!-- Assigned Positions Section -->
+    <div class="info-card">
+        <h3 class="card-title"><i class="fas fa-briefcase me-2"></i> Assigned Positions</h3>
+
+        <ul class="nav nav-tabs" id="positionsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
+                    Pending Supervisor <span class="badge bg-danger ms-2" th:text="${pendingSupervisorCount != null ? pendingSupervisorCount : 0}">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="false">
+                    Active Traineeships <span class="badge bg-success ms-2" th:text="${activeTraineeshipCount != null ? activeTraineeshipCount : 0}">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">
+                    Completed <span class="badge bg-info ms-2" th:text="${completedTraineeshipCount != null ? completedTraineeshipCount : 0}">0</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="positionsTabContent">
+            <!-- Pending Supervisor Tab -->
+            <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                <div th:if="${assignedPositions == null || assignedPositions.isEmpty() || pendingSupervisorCount == 0}">
+                    <p class="text-muted">No positions waiting for supervisor assignment.</p>
+                </div>
+
+                <div th:unless="${assignedPositions == null || assignedPositions.isEmpty() || pendingSupervisorCount == 0}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Company</th>
+                            <th>Student</th>
+                            <th>Period</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="position : ${assignedPositions}" th:if="${position.supervisor == null}">
+                            <td th:text="${position.title}">Position Title</td>
+                            <td th:text="${position.company.companyName}">Company Name</td>
+                            <td th:text="${position.student.studentName}">Student Name</td>
+                            <td>
+                                <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')}">Start Date</span> -
+                                <span th:text="${#temporals.format(position.toDate, 'dd/MM/yyyy')}">End Date</span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/committee/assign-supervisor/' + ${position.id}}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-user-plus me-1"></i> Assign Supervisor
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Active Traineeships Tab -->
+            <div class="tab-pane fade" id="active" role="tabpanel" aria-labelledby="active-tab">
+                <div th:if="${assignedPositions == null || assignedPositions.isEmpty() || activeTraineeshipCount == 0}">
+                    <p class="text-muted">No active traineeship positions.</p>
+                </div>
+
+                <div th:unless="${assignedPositions == null || assignedPositions.isEmpty() || activeTraineeshipCount == 0}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Company</th>
+                            <th>Student</th>
+                            <th>Supervisor</th>
+                            <th>Period</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="position : ${assignedPositions}" th:if="${position.supervisor != null && (position.passFailGrade == null)}">
+                            <td th:text="${position.title}">Position Title</td>
+                            <td th:text="${position.company.companyName}">Company Name</td>
+                            <td th:text="${position.student.studentName}">Student Name</td>
+                            <td th:text="${position.supervisor.professorName}">Professor Name</td>
+                            <td>
+                                <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')}">Start Date</span> -
+                                <span th:text="${#temporals.format(position.toDate, 'dd/MM/yyyy')}">End Date</span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/committee/view-traineeship/' + ${position.id}}" class="btn btn-success">
+                                    <i class="fas fa-eye me-1"></i> View & Complete
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Completed Tab -->
+            <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                <div th:if="${assignedPositions == null || assignedPositions.isEmpty() || completedTraineeshipCount == 0}">
+                    <p class="text-muted">No completed traineeship positions.</p>
+                </div>
+
+                <div th:unless="${assignedPositions == null || assignedPositions.isEmpty() || completedTraineeshipCount == 0}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Company</th>
+                            <th>Student</th>
+                            <th>Supervisor</th>
+                            <th>Period</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="position : ${assignedPositions}" th:if="${position.passFailGrade != null}">
+                            <td th:text="${position.title}">Position Title</td>
+                            <td th:text="${position.company.companyName}">Company Name</td>
+                            <td th:text="${position.student.studentName}">Student Name</td>
+                            <td th:text="${position.supervisor.professorName}">Professor Name</td>
+                            <td>
+                                <span th:text="${#temporals.format(position.fromDate, 'dd/MM/yyyy')}">Start Date</span> -
+                                <span th:text="${#temporals.format(position.toDate, 'dd/MM/yyyy')}">End Date</span>
+                            </td>
+                            <td>
+                                <span th:if="${position.passFailGrade == true}" class="status-badge badge-success">Pass</span>
+                                <span th:if="${position.passFailGrade == false}" class="status-badge badge-warning">Fail</span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/committee/view-traineeship/' + ${position.id}}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i> View Details
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professors Overview Section -->
+    <div class="info-card">
+        <h3 class="card-title"><i class="fas fa-chalkboard-teacher me-2"></i> Supervisors Overview</h3>
+
+        <div th:if="${professors == null || professors.isEmpty()}">
+            <p class="text-muted">No professors available as supervisors.</p>
+        </div>
+
+        <div th:unless="${professors == null || professors.isEmpty()}" class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Professor</th>
+                    <th>Interests</th>
+                    <th>Current Load</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="professor : ${professors}">
+                    <td th:text="${professor.professorName}">Professor Name</td>
+                    <td>
+                        <span th:if="${professor.interests == null || professor.interests.isEmpty()}">-</span>
+                        <span th:unless="${professor.interests == null || professor.interests.isEmpty()}"
+                              th:text="${#strings.listJoin(professor.interests, ', ')}">Interests</span>
+                    </td>
+                    <td>
+                        <span th:text="${professor.getActiveTraineeshipCount()}">0</span> positions
+                    </td>
+                    <td>
+                        <a th:href="@{/committee/view-professor/{id}(id=${professor.id})}"
+                           class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i> View Details
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
